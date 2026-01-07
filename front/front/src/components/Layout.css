@@ -1,0 +1,365 @@
+/* ===========================
+   PAGE LAYOUT
+=========================== */
+
+.patient-page {
+  padding: 30px 40px;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.patient-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #0f172a;
+  border-left: 6px solid #2563eb;
+  padding-left: 12px;
+}
+
+.book-btn {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.book-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.3);
+}
+
+/* ===========================
+   GRID & CARD
+=========================== */
+
+.booking-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 25px;
+}
+
+.booking-card {
+  background: white;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 18px 35px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.booking-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 25px 45px rgba(0,0,0,0.12);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.test-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e3a8a;
+}
+
+/* ===========================
+   STATUS PILL
+=========================== */
+
+.status-pill {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+.status-pill.BOOKED {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-pill.SAMPLE_COLLECTED {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.status-pill.IN_PROGRESS {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+.status-pill.COMPLETED {
+  background: #dcfce7;
+  color: #166534;
+}
+
+/* ===========================
+   PROGRESS BAR STEPPER
+=========================== */
+
+.progress-wrapper {
+  margin-top: 18px;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 600;
+  color: #9ca3af;
+  margin-bottom: 6px;
+}
+
+.progress-labels span.active {
+  color: #1d4ed8;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background: #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 10px;
+  transition: width 0.6s ease;
+  background: linear-gradient(90deg, #2563eb, #60a5fa);
+}
+
+.progress-fill.BOOKED {
+  width: 25%;
+}
+
+.progress-fill.SAMPLE_COLLECTED {
+  width: 50%;
+}
+
+.progress-fill.IN_PROGRESS {
+  width: 75%;
+}
+
+.progress-fill.COMPLETED {
+  width: 100%;
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+}
+
+/* ===========================
+   REPORT BUTTON
+=========================== */
+
+.report-btn {
+  margin-top: 16px;
+  width: 100%;
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.report-btn:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #1e40af, #1e3a8a);
+}
+/* ===========================
+   REPORTS PAGE
+=========================== */
+
+.reports-page {
+  padding: 30px 40px;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.reports-header {
+  margin-bottom: 25px;
+}
+
+.reports-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #0f172a;
+  border-left: 6px solid #16a34a;
+  padding-left: 12px;
+}
+
+/* GRID */
+
+.reports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+/* CARD */
+
+.report-card {
+  background: white;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 18px 35px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.report-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 25px 45px rgba(0,0,0,0.12);
+}
+
+.report-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* DOWNLOAD BUTTON */
+
+.download-btn {
+  margin-top: 18px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: white;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(22, 163, 74, 0.35);
+}
+
+/* EMPTY STATE */
+
+.empty-state {
+  margin-top: 40px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 16px;
+}
+/* =========================
+   SKELETON LOADER
+========================= */
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #e5e7eb;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 25%,
+    rgba(255,255,255,0.6) 37%,
+    transparent 63%
+  );
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton-title {
+  height: 20px;
+  width: 60%;
+  background: #d1d5db;
+  border-radius: 6px;
+  margin-bottom: 14px;
+}
+
+.skeleton-pill {
+  height: 22px;
+  width: 80px;
+  background: #d1d5db;
+  border-radius: 999px;
+  margin-bottom: 20px;
+}
+
+.skeleton-btn {
+  height: 38px;
+  width: 100%;
+  background: #d1d5db;
+  border-radius: 10px;
+}
+/* =========================
+   DASHBOARD STATS
+========================= */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  margin: 25px 0 40px;
+}
+
+.stat-card {
+  padding: 20px;
+  border-radius: 16px;
+  color: white;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  transition: transform 0.25s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-6px);
+}
+
+.stat-card h4 {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 10px;
+}
+
+.stat-card span {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+/* COLORS */
+.stat-card.blue {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+}
+
+.stat-card.green {
+  background: linear-gradient(135deg, #16a34a, #166534);
+}
+
+.stat-card.yellow {
+  background: linear-gradient(135deg, #f59e0b, #b45309);
+}
+
+.stat-card.orange {
+  background: linear-gradient(135deg, #f97316, #c2410c);
+}
