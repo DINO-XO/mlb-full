@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8080/api/reports";
+const BASE_URL = "https://mlb-lab.onrender.com/api/reports";
 
 // ✅ UPLOAD REPORT
 export const uploadReport = (bookingId, file) => {
