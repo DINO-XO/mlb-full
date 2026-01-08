@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://localhost:8080/api";
+const API = "https://mlb-lab.onrender.com/api";
 
 export const createBooking = (data) => {
   return axios.post(`${API}/bookings`, data);
