@@ -16,7 +16,7 @@ export default function BookTest() {
   /* LOAD TESTS */
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/tests")
+      .get("https://mlb-lab.onrender.com/api/tests")
       .then(res => setTests(res.data))
       .catch(() => setTests([]));
   }, []);
