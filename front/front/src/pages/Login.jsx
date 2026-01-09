@@ -1,6 +1,6 @@
 import { useState } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../api/authApi";
 import "../components/Auth.css";
 
 export default function Login() {
@@ -8,22 +8,19 @@ export default function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("PATIENT"); // default
+  const [role, setRole] = useState("PATIENT"); // ✅ REQUIRED
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await loginUser({
-        email,
-        password,
-        role,
-      });
+      const res = await axios.post(
+        "https://mlb-lab.onrender.com/api/auth/login",
+        { email, password, role }
+      );
 
-      // store logged-in user / technician
       localStorage.setItem("user", JSON.stringify(res.data));
 
-      // role-based navigation (UNCHANGED LOGIC)
       if (res.data.role === "TECHNICIAN") {
         navigate("/technician");
       } else {
@@ -32,7 +29,7 @@ export default function Login() {
 
     } catch (err) {
       alert("Invalid credentials ❌");
-      console.error(err.response?.data || err.message);
+      console.error(err);
     }
   };
 
@@ -42,11 +39,12 @@ export default function Login() {
 
       <form onSubmit={handleLogin} className="auth-form">
 
-        {/* ROLE SELECT */}
+        {/* ✅ ROLE SELECT — THIS FIXES 500 */}
         <select
+          className="auth-input"
           value={role}
           onChange={(e) => setRole(e.target.value)}
-          className="auth-input"
+          required
         >
           <option value="PATIENT">Patient</option>
           <option value="TECHNICIAN">Technician</option>
