@@ -10,15 +10,30 @@ export default function BookTest() {
   const [tests, setTests] = useState([]);
   const [selectedSlots, setSelectedSlots] = useState({});
   const [blockedSlots, setBlockedSlots] = useState({});
-  const [loadingTestId, setLoadingTestId] = useState(null); // 🔹 NEW
+  const [loadingTestId, setLoadingTestId] = useState(null);
+
   const user = JSON.parse(localStorage.getItem("user"));
+
+  // 🔴 CRITICAL FIX: prevent silent crash
+  if (!user) {
+    console.warn("User missing in localStorage");
+    return null; // UI untouched
+  }
 
   /* LOAD TESTS */
   useEffect(() => {
+    console.log("🚀 Loading tests...");
+
     axios
       .get("https://mlb-lab.onrender.com/api/tests")
-      .then(res => setTests(res.data))
-      .catch(() => setTests([]));
+      .then(res => {
+        console.log("📦 Tests received:", res.data);
+        setTests(res.data);
+      })
+      .catch(err => {
+        console.error("❌ Failed to load tests", err);
+        setTests([]);
+      });
   }, []);
 
   /* FETCH BOOKED SLOTS */
@@ -27,11 +42,14 @@ export default function BookTest() {
 
     try {
       const res = await getBookedSlots(testId);
+      console.log(`📅 Slots for test ${testId}:`, res.data);
+
       setBlockedSlots(prev => ({
         ...prev,
         [testId]: res.data
       }));
-    } catch {
+    } catch (err) {
+      console.error("❌ Failed to load slots", err);
       setBlockedSlots(prev => ({
         ...prev,
         [testId]: []
@@ -48,7 +66,7 @@ export default function BookTest() {
       return;
     }
 
-    setLoadingTestId(testId); // 🔹 disable button
+    setLoadingTestId(testId);
 
     try {
       await createBooking({
@@ -65,10 +83,10 @@ export default function BookTest() {
       }));
 
     } catch (err) {
+      console.error("❌ Booking failed", err);
       alert("Booking failed ❌");
-      console.error(err);
     } finally {
-      setLoadingTestId(null); // 🔹 re-enable button
+      setLoadingTestId(null);
     }
   };
 
@@ -118,7 +136,7 @@ export default function BookTest() {
 
             <button
               className="book-btn"
-              disabled={loadingTestId === test.id} // 🔹 disable
+              disabled={loadingTestId === test.id}
               onClick={() => bookTest(test.id)}
             >
               {loadingTestId === test.id ? "Booking..." : "Book Test"}
