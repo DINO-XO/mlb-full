@@ -1,6 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../api/authApi";
 import "../components/Auth.css";
 
 export default function Login() {
@@ -8,22 +8,22 @@ export default function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("PATIENT"); // ✅ DEFAULT
+  const [role, setRole] = useState("PATIENT"); // default
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:8080/api/auth/login", {
+      const res = await loginUser({
         email,
         password,
-        role, // ✅ IMPORTANT
+        role,
       });
 
-      // save user/technician
+      // store logged-in user / technician
       localStorage.setItem("user", JSON.stringify(res.data));
 
-      // role based redirect
+      // role-based navigation (UNCHANGED LOGIC)
       if (res.data.role === "TECHNICIAN") {
         navigate("/technician");
       } else {
@@ -32,7 +32,7 @@ export default function Login() {
 
     } catch (err) {
       alert("Invalid credentials ❌");
-      console.error(err);
+      console.error(err.response?.data || err.message);
     }
   };
 
