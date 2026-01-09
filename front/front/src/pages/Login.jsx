@@ -1,92 +1,79 @@
 import { useState } from "react";
-import { loginUser } from "../api/authApi";
-import { useNavigate, Link } from "react-router-dom";
-import "../components/AuthLayout.css";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import "../components/Auth.css";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("PATIENT"); // ✅ DEFAULT
 
-    // ✅ FRONTEND VALIDATION
-    if (!email.trim()) {
-      alert("Please enter email");
-      return;
-    }
-
-    if (!password.trim()) {
-      alert("Please enter password");
-      return;
-    }
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
     try {
-      setLoading(true);
+      const res = await axios.post("http://localhost:8080/api/auth/login", {
+        email,
+        password,
+        role, // ✅ IMPORTANT
+      });
 
-      const res = await loginUser({ email, password });
-
-      // ✅ SAVE USER
+      // save user/technician
       localStorage.setItem("user", JSON.stringify(res.data));
 
-      // ✅ ROLE BASED REDIRECT
-      if (res.data.role === "PATIENT") {
-        navigate("/patient");
-      } else if (res.data.role === "TECHNICIAN") {
+      // role based redirect
+      if (res.data.role === "TECHNICIAN") {
         navigate("/technician");
       } else {
-        alert("Unknown role");
+        navigate("/patient");
       }
 
     } catch (err) {
-      alert("Invalid email or password");
-    } finally {
-      setLoading(false);
+      alert("Invalid credentials ❌");
+      console.error(err);
     }
   };
 
   return (
     <div className="auth-container">
-      <div className="auth-left">
-        <h1>Medical Lab System</h1>
-        <p>
-          Secure lab test booking, real-time status tracking, and instant report
-          downloads — all in one place.
-        </p>
-      </div>
+      <h2>Login</h2>
 
-      <div className="auth-right">
-        <div className="auth-card">
-          <h2>Welcome Back</h2>
-          <span>Please login to your account</span>
+      <form onSubmit={handleLogin} className="auth-form">
 
-          <input
-            placeholder="Email address"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-          />
+        {/* ROLE SELECT */}
+        <select
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          className="auth-input"
+        >
+          <option value="PATIENT">Patient</option>
+          <option value="TECHNICIAN">Technician</option>
+        </select>
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-          />
+        <input
+          type="email"
+          placeholder="Email"
+          className="auth-input"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
 
-          <button
-            className="auth-btn"
-            onClick={handleLogin}
-            disabled={loading}
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
+        <input
+          type="password"
+          placeholder="Password"
+          className="auth-input"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
 
-          <div className="auth-footer">
-            Don’t have an account? <Link to="/register">Sign up</Link>
-          </div>
-        </div>
-      </div>
+        <button type="submit" className="auth-btn">
+          Login
+        </button>
+      </form>
     </div>
   );
 }
