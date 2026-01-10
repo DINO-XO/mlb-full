@@ -4,7 +4,9 @@ import {
   uploadReport,
   updateBookingStatus,
 } from "../api/bookingApi";
-import "../components/TechnicianDashboard.css";
+import Button from "../components/ui/Button";
+import Card from "../components/ui/Card";
+import Input from "../components/ui/Input";
 
 export default function TechnicianDashboard() {
   const [bookings, setBookings] = useState([]);
@@ -71,30 +73,37 @@ export default function TechnicianDashboard() {
   };
 
   return (
-    <div className="tech-page">
-      <h1 className="tech-title">Technician Dashboard</h1>
+    <div className="container py-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Technician Dashboard</h1>
+        <div style={{ width: '300px' }}>
+          <Input
+            placeholder="Search patient..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </div>
+      </div>
 
       {/* FILTER BAR */}
-      <div className="filter-bar">
-        <div className="filter-buttons">
-          {["ALL","COMPLETED","BOOKED","IN_PROGRESS"].map(s => (
-            <button
-              key={s}
-              className={`filter-btn ${statusFilter === s ? "active" : ""}`}
-              onClick={() => setStatusFilter(s)}
-            >
-              {s}
-              <span className="count">{counts[s]}</span>
-            </button>
-          ))}
-        </div>
-
-        <input
-          className="search-box"
-          placeholder="Search patient..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
+      <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
+        {["ALL", "COMPLETED", "BOOKED", "IN_PROGRESS"].map(s => (
+          <button
+            key={s}
+            onClick={() => setStatusFilter(s)}
+            className={`btn ${statusFilter === s ? 'btn-primary' : 'btn-secondary'}`}
+            style={{ borderRadius: '9999px', padding: '0.5rem 1rem' }}
+          >
+            {s.replace('_', ' ')}
+            <span style={{
+              marginLeft: '0.5rem',
+              background: statusFilter === s ? 'rgba(255,255,255,0.2)' : 'var(--bg-surface-alt)',
+              padding: '0.1rem 0.5rem',
+              borderRadius: '9999px',
+              fontSize: '0.75rem'
+            }}>{counts[s]}</span>
+          </button>
+        ))}
       </div>
 
       {/* BOOKINGS */}
@@ -107,71 +116,89 @@ export default function TechnicianDashboard() {
           if (!visibleTests.length) return null;
 
           return (
-            <div key={username} className="patient-section">
-              <div className="patient-header">
-                <div className="avatar">
+            <div key={username} className="mb-8">
+              <div className="flex items-center gap-3 mb-4">
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  background: 'var(--primary)',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 'bold'
+                }}>
                   {username.charAt(0).toUpperCase()}
                 </div>
-                <div className="patient-info">
-                  <h2>{username}</h2>
-                  <p>{visibleTests.length} Test(s)</p>
+                <div>
+                  <h2 className="text-lg font-bold">{username}</h2>
+                  <p className="text-secondary text-sm">{visibleTests.length} Test(s)</p>
                 </div>
               </div>
 
-              <div className={`test-grid ${visibleTests.length === 1 ? "single-layout" : ""}`}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {visibleTests.map(test => {
                   const uploadState = uploading[test.id];
                   const isUpdating = updating[test.id];
 
                   return (
-                    <div
-                      key={test.id}
-                      className={`test-card ${visibleTests.length === 1 ? "single" : "grid"}`}
-                    >
-                      <div className="test-top">
-                        <h3>{test.labTest.testName}</h3>
-                        <span className={`status ${test.status.toLowerCase()}`}>
+                    <Card key={test.id} className="relative">
+                      <div className="flex justify-between items-start mb-4">
+                        <h3 className="font-bold">{test.labTest.testName}</h3>
+                        <span style={{
+                          fontSize: '0.75rem',
+                          padding: '0.25rem 0.5rem',
+                          borderRadius: '9999px',
+                          fontWeight: 600,
+                          backgroundColor: test.status === 'COMPLETED' ? '#DCFCE7' : test.status === 'IN_PROGRESS' ? '#FEF3C7' : '#DBEAFE',
+                          color: test.status === 'COMPLETED' ? '#166534' : test.status === 'IN_PROGRESS' ? '#D97706' : '#1E40AF'
+                        }}>
                           {test.status}
                         </span>
                       </div>
 
-                      <div className="test-meta">
-                        Booking ID: <b>{test.id}</b>
+                      <div className="text-sm border-t border-b py-2 mb-4" style={{ borderColor: 'var(--border)' }}>
+                        <div className="flex justify-between mb-1">
+                          <span className="text-secondary">Booking ID:</span>
+                          <span className="font-medium">#{test.id}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-secondary">Slot Time:</span>
+                          <span className="font-medium">{test.slotTime}</span>
+                        </div>
                       </div>
 
-                      {/* ✅ SLOT TIME DISPLAY (ADDED) */}
-                      <div className="test-meta">
-                        Slot Time: <b>{test.slotTime}</b>
-                      </div>
-
-                      {test.status !== "COMPLETED" && (
-                        <button
-                          className="complete-btn"
-                          disabled={isUpdating}
-                          onClick={() => markCompleted(test.id)}
-                        >
-                          {isUpdating ? "Updating..." : "Mark as Completed"}
-                        </button>
-                      )}
-
-                      <label className={`upload-zone ${uploadState || ""}`}>
-                        <input
-                          type="file"
-                          hidden
-                          onChange={e =>
-                            handleUpload(test.id, e.target.files[0])
-                          }
-                        />
-                        {uploadState === "uploading" && <span>Uploading...</span>}
-                        {uploadState === "done" && <span className="success">✔ Uploaded</span>}
-                        {!uploadState && (
-                          <>
-                            <span>⬆ Upload Report</span>
-                            <small>PDF only</small>
-                          </>
+                      <div className="flex flex-col gap-2">
+                        {test.status !== "COMPLETED" && (
+                          <Button
+                            variant={isUpdating ? "secondary" : "primary"}
+                            disabled={isUpdating}
+                            onClick={() => markCompleted(test.id)}
+                            fullWidth
+                          >
+                            {isUpdating ? "Updating..." : "Mark as Completed"}
+                          </Button>
                         )}
-                      </label>
-                    </div>
+
+                        <label className={`btn ${uploadState === 'done' ? 'btn-secondary' : 'btn-secondary'} flex justify-center items-center gap-2 cursor-pointer`}
+                          style={{
+                            border: uploadState === 'done' ? '1px solid var(--secondary)' : '1px dashed var(--primary)',
+                            color: uploadState === 'done' ? 'var(--secondary)' : 'var(--primary)'
+                          }}
+                        >
+                          <input
+                            type="file"
+                            hidden
+                            onChange={e => handleUpload(test.id, e.target.files[0])}
+                          />
+                          {uploadState === "uploading" ? "Uploading..." :
+                            uploadState === "done" ? "✔ Uploaded" :
+                              uploadState === "error" ? "❌ Failed" :
+                                "⬆ Upload Report (PDF)"}
+                        </label>
+                      </div>
+                    </Card>
                   );
                 })}
               </div>

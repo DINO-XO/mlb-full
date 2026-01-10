@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { getUserBookings } from "../api/bookingApi";
 import { downloadReport } from "../api/reportApi";
-import "../components/Layout.css";
+import Button from "../components/ui/Button";
+import Card from "../components/ui/Card";
 
 export default function MyReports() {
   const [bookings, setBookings] = useState([]);
@@ -16,52 +17,59 @@ export default function MyReports() {
       .finally(() => setLoading(false));
   }, [user.id]);
 
-  return (
-    <div className="reports-page">
+  const completedBookings = bookings.filter(b => b.status === 'COMPLETED');
 
-      <div className="reports-header">
-        <h2 className="reports-title">My Reports</h2>
+  return (
+    <div className="container py-8">
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold">My Reports</h2>
+        <p className="text-secondary">Access your medical test reports</p>
       </div>
 
-      {/* SKELETON */}
-      {loading && (
-        <div className="reports-grid">
-          {[1, 2].map(i => (
-            <div key={i} className="report-card skeleton">
-              <div className="skeleton-title"></div>
-              <div className="skeleton-pill"></div>
-              <div className="skeleton-btn"></div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* REAL DATA */}
-      {!loading && (
-        <div className="reports-grid">
+      {loading ? (
+        <div className="text-center py-8 text-secondary">Loading reports...</div>
+      ) : completedBookings.length === 0 ? (
+        <Card className="text-center p-8">
+          <div className="text-4xl mb-4">📄</div>
+          <h3 className="text-lg font-bold mb-2">No reports available</h3>
+          <p className="text-secondary">Reports will appear here once your tests are completed.</p>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {bookings.map(b => (
-            <div key={b.id} className="report-card fade-in">
-
-              <div className="report-top">
-                <h3 className="test-name">{b.labTest.testName}</h3>
-                <span className={`status-pill ${b.status}`}>
+            <Card key={b.id} className="flex flex-col">
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="font-bold text-lg">{b.labTest.testName}</h3>
+                <span style={{
+                  fontSize: '0.75rem',
+                  padding: '0.25rem 0.5rem',
+                  borderRadius: '9999px',
+                  fontWeight: 600,
+                  backgroundColor: b.status === "COMPLETED" ? '#DCFCE7' : '#DBEAFE',
+                  color: b.status === "COMPLETED" ? '#166534' : '#1E40AF'
+                }}>
                   {b.status}
                 </span>
               </div>
 
-              {b.status?.toUpperCase() === "COMPLETED" && (
-                <button
-                  className="download-btn"
-                  onClick={() => downloadReport(b.id)}
-                >
-                  ⬇ Download Report
-                </button>
-              )}
-            </div>
+              <div className="mt-auto">
+                {b.status?.toUpperCase() === "COMPLETED" ? (
+                  <Button
+                    onClick={() => downloadReport(b.id)}
+                    fullWidth
+                  >
+                    ⬇ Download Report
+                  </Button>
+                ) : (
+                  <div className="text-center text-sm text-secondary p-2 bg-slate-50 rounded">
+                    Report pending
+                  </div>
+                )}
+              </div>
+            </Card>
           ))}
         </div>
       )}
-
     </div>
   );
 }

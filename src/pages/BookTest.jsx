@@ -4,7 +4,8 @@ import {
   createBooking,
   getBookedSlots
 } from "../api/bookingApi";
-import "../components/BookTest.css";
+import Button from "../components/ui/Button";
+import Card from "../components/ui/Card";
 
 export default function BookTest() {
   const [tests, setTests] = useState([]);
@@ -14,20 +15,16 @@ export default function BookTest() {
 
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // 🔴 CRITICAL FIX: prevent silent crash
   if (!user) {
     console.warn("User missing in localStorage");
-    return null; // UI untouched
+    return null;
   }
 
   /* LOAD TESTS */
   useEffect(() => {
-    console.log("🚀 Loading tests...");
-
     axios
       .get("https://mlb-lab.onrender.com/api/tests")
       .then(res => {
-        console.log("📦 Tests received:", res.data);
         setTests(res.data);
       })
       .catch(err => {
@@ -42,8 +39,6 @@ export default function BookTest() {
 
     try {
       const res = await getBookedSlots(testId);
-      console.log(`📅 Slots for test ${testId}:`, res.data);
-
       setBlockedSlots(prev => ({
         ...prev,
         [testId]: res.data
@@ -91,58 +86,56 @@ export default function BookTest() {
   };
 
   return (
-    <div className="book-page">
-      <h1 className="book-title">Book Lab Test</h1>
+    <div className="container py-8">
+      <h1 className="text-2xl font-bold mb-8">Book Lab Test</h1>
 
-      <div className="test-list">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {tests.map(test => (
-          <div key={test.id} className="book-card">
-
-            <div className="card-header">
-              <h3>{test.testName}</h3>
-              <span className="price">₹{test.price}</span>
+          <Card key={test.id} className="flex flex-col h-full">
+            <div className="flex justify-between items-start mb-2">
+              <h3 className="text-xl font-bold">{test.testName}</h3>
+              <span className="text-lg font-bold text-primary">₹{test.price}</span>
             </div>
 
-            <p className="desc">{test.description}</p>
+            <p className="text-secondary mb-6 flex-grow">{test.description}</p>
 
-            <select
-              className="slot-select"
-              value={selectedSlots[test.id] || ""}
-              onFocus={() => loadBookedSlots(test.id)}
-              onChange={e =>
-                setSelectedSlots(prev => ({
-                  ...prev,
-                  [test.id]: e.target.value
-                }))
-              }
-            >
-              <option value="">Select Time Slot</option>
+            <div className="mt-auto">
+              <label className="form-label text-sm mb-1">Select Time Slot</label>
+              <select
+                className="form-input mb-4"
+                value={selectedSlots[test.id] || ""}
+                onFocus={() => loadBookedSlots(test.id)}
+                onChange={e =>
+                  setSelectedSlots(prev => ({
+                    ...prev,
+                    [test.id]: e.target.value
+                  }))
+                }
+              >
+                <option value="">Choose a time...</option>
+                {TIME_SLOTS.map(slot => {
+                  const isBlocked = blockedSlots[test.id]?.includes(slot.value);
+                  return (
+                    <option
+                      key={slot.value}
+                      value={slot.value}
+                      disabled={isBlocked}
+                    >
+                      {slot.label} {isBlocked ? "(Booked)" : ""}
+                    </option>
+                  );
+                })}
+              </select>
 
-              {TIME_SLOTS.map(slot => {
-                const isBlocked =
-                  blockedSlots[test.id]?.includes(slot.value);
-
-                return (
-                  <option
-                    key={slot.value}
-                    value={slot.value}
-                    disabled={isBlocked}
-                  >
-                    {slot.label} {isBlocked ? "(Booked)" : ""}
-                  </option>
-                );
-              })}
-            </select>
-
-            <button
-              className="book-btn"
-              disabled={loadingTestId === test.id}
-              onClick={() => bookTest(test.id)}
-            >
-              {loadingTestId === test.id ? "Booking..." : "Book Test"}
-            </button>
-
-          </div>
+              <Button
+                fullWidth
+                disabled={loadingTestId === test.id}
+                onClick={() => bookTest(test.id)}
+              >
+                {loadingTestId === test.id ? "Booking..." : "Book Test"}
+              </Button>
+            </div>
+          </Card>
         ))}
       </div>
     </div>
